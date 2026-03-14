@@ -18,18 +18,14 @@ Clone the tool from repo
 move to folder and open cmd in that directory
 
 To install all dependencies, run:
-```bash
-python -m pip install -r requirements.txt
+`bash
+python -m pip install -r requirements.txt`.
 
-Then to use 
+##USAGE
+`bash 
+python wifi.py`.
 
-python wifi.py
-====================================               =======================================================================
-
-==================================================        ================================================================
-** This project is created only for educational purposes.
-
+============================================================        ##DISCLAIMER ================================================================
+** This project is created only for educational/ethical purposes.
 Do NOT use this tool on networks that you do not own or do not have permission to test.
-
-
 The author is not responsible for any misuse of this project**
