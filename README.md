@@ -21,7 +21,7 @@ To install all dependencies, run:
 `python -m pip install -r requirements.txt `
 CHECK README.md FOR MORE INFORMATION
 ## USAGE
-`python wifi.py `
+`python wifi_v3.py `
 YOU can use the provided wordlist wich is from wifite's probale.txt
 ## DISCLAIMER 
 ** This project is created only for educational/ethical purposes.
