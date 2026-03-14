@@ -21,7 +21,7 @@ To install all dependencies, run:
 `bash
 python -m pip install -r requirements.txt`.
 
-##USAGE
+## USAGE
 `bash 
 python wifi.py`.
 
