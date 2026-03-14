@@ -8,6 +8,10 @@ A professional-grade wireless security auditing tool with a synchronized hardwar
 - **Colorama Effects**: High-contrast, multi-color terminal interface.
 - **Typewriter Warning**: Dramatic character-by-character success messages.
 - **Auto-Logging**: Cracked keys are saved to `cracked_passwords.txt`.
+## REQUIREMENTS 
+1. Python 3
+2. Wordlist e.g rockyou.txt
+3. Windows 10 or later
 
 ## 🛠️ Installation 
 Clone the tool from repo 
