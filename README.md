@@ -17,11 +17,11 @@ A professional-grade wireless security auditing tool with a synchronized hardwar
 Clone the tool from repo 
 move to folder and open cmd in that directory
 
-To install all dependencies, run:
+To install all dependencies*ONLY AFTER INSTALLATION OF PYTHON*, run:
 `python -m pip install -r requirements.txt `
 CHECK README.md FOR MORE INFORMATION
 ## USAGE
-`python wifi_v3.py `
+`python wifi.py `
 YOU can use the provided wordlist wich is from wifite's probale.txt
 ## DISCLAIMER 
 ** This project is created only for educational/ethical purposes.
