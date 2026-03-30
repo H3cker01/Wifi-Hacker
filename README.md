@@ -8,9 +8,9 @@ Colorama Effects: High-contrast, multi-color terminal interface.
 Typewriter Warning: Dramatic character-by-character success messages.
 Auto-Logging: Cracked keys are automatically saved to cracked_passwords.txt.
 ## 💻 Requirements
-Windows 10 or later
-Administrative Privileges (Required to access WiFi hardware)
-Wordlist: e.g., rockyou.txt or the included probable.txt
+1. Windows 10 or later
+2. Administrative Privileges (Required to access WiFi hardware)
+3. Wordlist: e.g., rockyou.txt or the included probable.txt
 ## 🛠️ Installation & Setup
 Download the repository or just the wifi.exe from this repository.
 Place your wordlist (e.g., probable.txt) in the same folder as the .exe.
