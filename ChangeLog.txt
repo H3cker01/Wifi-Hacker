@@ -25,3 +25,53 @@ Auto-Logging & connecting: All successful cracks are timestamped and saved to cr
 🛑 Safe Exit
 Stealth Close: Updated the KeyboardInterrupt message to "Operation Aborted." for a cleaner, themed exit when hitting Ctrl+C.
 Auto Scanning: Fully automated the discovery process—simply select the ID of the target network from the live list.
+
+🛠️ WiFi Hacker v9.0 - THE GUI INTEGRATION UPDATE
+New Architecture: Unified Graphical Deployment
+
+Strict GitHub Dark Aesthetic: Converted the interface to a high-contrast dark mode using #0d1117 for the background and #161b22 for surface elements.
+
+Python Independence: Successfully compiled the framework into a standalone .exe using PyInstaller, eliminating the need for users to install Python, Pip, or external libraries.
+
+Self-Contained Binary: Bundled pywifi, comtypes, and tkinter directly into the executable resource header.
+
+Invisible Resource Header: Integrated a custom icon.ico directly into the binary using the --icon compiler flag.
+
+🛠️ WiFi Hacker v8.9 & v9.0 Changelog
+🔒 WPA2/WPA3 Mandatory Skip Logic
+
+Auto-Filter: The engine now performs a real-time length check to skip any passwords under 8 digits.
+
+Efficiency: Uses a continue statement to jump to the next key without calling the test_wifi function, preventing hardware hang-ups on invalid attempts.
+
+🛰️ Real-Time Protocol Detection
+
+Auto-Scan: Integrated the get_protocol_details function that scans the target SSID before starting the injection.
+
+Dynamic AKM Mapping: Automatically identifies if the target is WPA-PSK, WPA2-PSK, or WPA3 (SAE) and applies the correct Authentication Key Management (AKM) type.
+
+📊 UI & Visual Overhaul
+
+Color-Coded Signal HUD: Implemented a "Signal Grade" system in the main table where SSID and Strength are highlighted in Green (Excellent), Yellow (Average), or Red (Poor) based on dBm.
+
+Live ETR & Delay Tracker: Added a real-time "Estimated Time Remaining" counter and a display showing the exact delay being applied to the current attempt.
+
+Removed Redundancy: Streamlined the UI by removing the Frequency and Channel columns for a cleaner "Hacker" look.
+
+⚙️ Attack Logic Optimization
+
+Jitter-Free Precision: Removed the randomized Anti-Bot Jitter to allow for strict, user-defined attempt delays as requested.
+
+Session Persistence: Automatically saves attack progress to .progress.log, allowing the user to resume an audit from the last tested password.
+
+☣️ Success Sequence & Logging
+
+Access Granted HUD: Upon a successful crack, the top status bar shifts to Green "ACCESS GRANTED" and enables a dedicated "COPY PASSWORD" button.
+
+Auto-Logging: All successful cracks are timestamped and saved to cracked.txt in the root directory.
+
+🛑 Safe Exit & Discovery
+
+Stealth Abort: Updated the "ABORT" logic to gracefully disconnect from the wireless interface and reset the system status to "READY".
+
+Automated Discovery: Simply click "SCAN NETWORKS" to generate a live, filtered list of available targets.
